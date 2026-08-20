@@ -40,34 +40,20 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
     }
     fun login() {
         viewModelScope.launch {
-
             _uiState.value = LoginUiState.Loading
-            try {
-                val loginRequest = LoginRequest(
-                    username = _usernameTextField.value,
-                    password = _passwordTextField.value
-                )
-                val response = userRepository.login(loginRequest)
-                if(response.isSuccessful){
-                    val authHeader = response.headers()["Authorization"]
-                    val token = when {
-                        authHeader == null -> null
-                        authHeader.startsWith("Bearer ", ignoreCase = true) -> authHeader.substring(7).trim()
-                        else -> authHeader.trim()
-                    }
-                    if (!token.isNullOrEmpty()) {
-                        encryptedTokenStorage.saveAccessToken(token)
-                    }
+
+            val loginRequest = LoginRequest(
+                username = _usernameTextField.value,
+                password = _passwordTextField.value
+            )
+
+            userRepository.login(loginRequest)
+                .onSuccess {
                     _uiState.value = LoginUiState.Success
                 }
-                else{
-                    _uiState.value = LoginUiState.Error("Đăng nhập thất bại")
+                .onFailure { error ->
+                    _uiState.value = LoginUiState.Error(error.message ?: "An unknown error occurred")
                 }
-
-            }
-            catch (e: Exception) {
-                _uiState.value = LoginUiState.Error(e.message ?: "An unknown error occurred")
-            }
         }
     }
     fun checkToken() {

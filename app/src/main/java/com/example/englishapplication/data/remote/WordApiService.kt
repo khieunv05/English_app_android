@@ -4,6 +4,7 @@ import com.example.englishapplication.domain.model.CreateWordRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -13,7 +14,7 @@ import retrofit2.http.Path
 
 interface WordApiService {
     @GET("/api/v1/words/me")
-    suspend fun fetchAllWords(): List<WordResponse>
+    suspend fun fetchAllWords(): Response<List<WordResponse>>
     @POST("/api/v1/words")
     suspend fun createWord(@Body createWordRequest: CreateWordRequest): WordResponse
     @PUT("/api/v1/words/{wordId}")

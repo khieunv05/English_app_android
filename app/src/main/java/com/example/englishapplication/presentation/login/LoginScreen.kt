@@ -22,8 +22,15 @@ import androidx.compose.runtime.collectAsState
 @OptIn(ExperimentalMaterial3Api::class)
 fun LoginScreen(
     viewModel: LoginViewModel,
+    onLoginSuccess: ()-> Unit,
     onSignUpClick: () -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(uiState) {
+        if(uiState is LoginUiState.Success){
+            onLoginSuccess()
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -104,7 +111,11 @@ fun LoginScreen(
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Login", style = MaterialTheme.typography.titleMedium)
+                if (uiState is LoginUiState.Loading) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text("Login", style = MaterialTheme.typography.titleMedium)
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

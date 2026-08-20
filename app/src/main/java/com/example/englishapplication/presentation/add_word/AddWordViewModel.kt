@@ -80,7 +80,6 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
                     pronunciation = _pronunciationTextField.value
                 )
                 wordRepository.createWord(createWordRequest)
-                _uiState.value = AddWordUiState.Success("Thêm từ mới thành công")
                 _englishTextField.value = ""
                 _vietnameseTextField.value = ""
                 _exampleTextField.value = ""
@@ -88,6 +87,7 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
                 _levelTextField.value = ""
                 _partOfSpeechTextField.value = ""
                 _pronunciationTextField.value = ""
+                _uiState.value = AddWordUiState.Success("Thêm từ mới thành công")
             } catch (e: Exception) {
                 _uiState.value = AddWordUiState.Error(e.message ?: "Unknown error occurred")
             }

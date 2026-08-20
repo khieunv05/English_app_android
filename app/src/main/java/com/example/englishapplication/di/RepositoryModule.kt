@@ -1,8 +1,10 @@
 package com.example.englishapplication.di
 
+import com.example.englishapplication.data.repository.GeminiRepositoryImp
 import com.example.englishapplication.data.repository.PhraseRepositoryImp
 import com.example.englishapplication.data.repository.UserRepositoryImp
 import com.example.englishapplication.data.repository.WordRepositoryImp
+import com.example.englishapplication.domain.repository.GeminiRepository
 import com.example.englishapplication.domain.repository.PhraseRepository
 import com.example.englishapplication.domain.repository.UserRepository
 import com.example.englishapplication.domain.repository.WordRepository
@@ -26,4 +28,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserRepository(userRepositoryImp: UserRepositoryImp): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGeminiRepository(geminiRepositoryImp: GeminiRepositoryImp): GeminiRepository
 }

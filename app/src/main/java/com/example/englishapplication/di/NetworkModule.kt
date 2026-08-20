@@ -1,9 +1,13 @@
 package com.example.englishapplication.di
 
 import com.example.englishapplication.data.local.EncryptedTokenStorage
+import com.example.englishapplication.data.remote.GeminiApiService
+import com.example.englishapplication.data.remote.LocalDateTimeAdapter
 import com.example.englishapplication.data.remote.PhraseApiService
 import com.example.englishapplication.data.remote.UserApiService
 import com.example.englishapplication.data.remote.WordApiService
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 import javax.inject.Singleton
 
 @Module
@@ -40,10 +45,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
+        val gson: Gson = GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .create()
+
         return Retrofit.Builder()
             .baseUrl("http://192.168.1.5:8080")
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
     @Provides
@@ -60,6 +69,12 @@ object NetworkModule {
     @Singleton
     fun provideUserApiService(retrofit: Retrofit): UserApiService{
         return retrofit.create(UserApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeminiApiService(retrofit: Retrofit): GeminiApiService{
+        return retrofit.create(GeminiApiService::class.java)
     }
 
 }

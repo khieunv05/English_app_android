@@ -19,6 +19,8 @@ import com.example.englishapplication.presentation.login.LoginScreen
 import com.example.englishapplication.presentation.login.LoginViewModel
 import com.example.englishapplication.presentation.sign_up.SignUpScreen
 import com.example.englishapplication.presentation.sign_up.SignUpViewModel
+import com.example.englishapplication.presentation.word_main_screen.WordMainScreen
+import com.example.englishapplication.presentation.word_main_screen.WordMainScreenViewModel
 import com.example.englishapplication.ui.theme.EnglishApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +35,11 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "login"){
                     composable("login") {
                             val loginViewModel: LoginViewModel = hiltViewModel()
-                        LoginScreen(loginViewModel){
+                        LoginScreen(loginViewModel, onLoginSuccess = {
+                            navController.navigate("wordMainScreen"){
+                                popUpTo("login"){inclusive = true}
+                            }
+                        }){
                             navController.navigate("signUp"){
                                 popUpTo("login") { inclusive = true }
                             }
@@ -46,6 +52,10 @@ class MainActivity : ComponentActivity() {
                                 popUpTo("signUp") { inclusive = true }
                             }
                         }
+                    }
+                    composable("wordMainScreen") {
+                        val wordMainScreenViewModel: WordMainScreenViewModel = hiltViewModel()
+                        WordMainScreen(wordMainScreenViewModel)
                     }
                 }
             }

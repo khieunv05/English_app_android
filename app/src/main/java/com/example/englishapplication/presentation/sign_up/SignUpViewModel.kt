@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.domain.model.CreateUserRequest
 import com.example.englishapplication.domain.repository.UserRepository
+import com.example.englishapplication.presentation.login.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,13 +46,14 @@ class SignUpViewModel @Inject constructor(private val userRepository: UserReposi
             try {
                 val createUserRequest = CreateUserRequest(_usernameTextField.value,
                     _passwordTextField.value)
-                val response = userRepository.createUser(createUserRequest)
-                if (response.isSuccessful) {
-                    _uiState.value = SignUpUiState.Success("Tạo tài khoản thành công")
-                } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Gặp lỗi khi tạo tài khoản"
-                    _uiState.value = SignUpUiState.Error(errorMsg)
-                }
+                userRepository.createUser(createUserRequest)
+                    .onSuccess {
+                        _uiState.value = SignUpUiState.Success("Đăng ký thành công")
+                    }
+                    .onFailure { error->
+                        _uiState.value = SignUpUiState.Error(error.message ?: "Lỗi không xác định")
+                     }
+
             }
             catch (e: Exception){
                 _uiState.value = SignUpUiState.Error(e.message ?: "Gặp lỗi khi tạo tài khoản")

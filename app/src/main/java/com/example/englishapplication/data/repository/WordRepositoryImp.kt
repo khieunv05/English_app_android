@@ -6,11 +6,24 @@ import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordResponse
 import com.example.englishapplication.domain.repository.WordRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiService) : WordRepository {
-    override suspend fun getAllWords(): List<WordResponse> {
-        return wordApiService.fetchAllWords()
+    override suspend fun getAllWords(): Result<List<WordResponse>> {
+        return try {
+            val response = wordApiService.fetchAllWords()
+            if(response.isSuccessful){
+                Result.success(response.body() ?: emptyList())
+            }
+            else{
+                Result.failure(Exception(response.errorBody()?.string() ?: "Lấy từ thất bại"))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
+
     }
 
     override suspend fun createWord(createWordRequest: CreateWordRequest): WordResponse {

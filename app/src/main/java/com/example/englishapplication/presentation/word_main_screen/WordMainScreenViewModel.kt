@@ -2,7 +2,8 @@ package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.englishapplication.domain.model.WordResponse
+import com.example.englishapplication.domain.model.WordData
+import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,9 +19,9 @@ class WordMainScreenViewModel @Inject constructor(
 
     val uiState: StateFlow<WordMainScreenUiState> = _uiState
 
-    private val _userWords = MutableStateFlow<List<WordResponse>>(emptyList())
+    private val _userWords = MutableStateFlow<List<WordResponseWithDate>>(emptyList())
 
-    val userWords : StateFlow<List<WordResponse>> = _userWords
+    val userWords : StateFlow<List<WordResponseWithDate>> = _userWords
 
     init {
         loadData()

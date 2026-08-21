@@ -6,6 +6,7 @@ import com.example.englishapplication.data.remote.LocalDateTimeAdapter
 import com.example.englishapplication.data.remote.PhraseApiService
 import com.example.englishapplication.data.remote.UserApiService
 import com.example.englishapplication.data.remote.WordApiService
+import com.example.englishapplication.type_adapter.LocalDateAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -16,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Singleton
 
@@ -47,6 +49,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
         val gson: Gson = GsonBuilder()
             .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .create()
 
         return Retrofit.Builder()

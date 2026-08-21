@@ -3,7 +3,7 @@ package com.example.englishapplication.domain.model
 import kotlinx.serialization.SerialName
 import java.time.LocalDateTime
 
-data class WordResponse(
+data class WordData(
     @SerialName("createdAt")
     val createdAt: LocalDateTime,
     @SerialName("english")

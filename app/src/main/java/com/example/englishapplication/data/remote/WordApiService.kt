@@ -3,7 +3,8 @@ package com.example.englishapplication.data.remote
 import com.example.englishapplication.domain.model.CreateWordRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
-import com.example.englishapplication.domain.model.WordResponse
+import com.example.englishapplication.domain.model.WordData
+import com.example.englishapplication.domain.model.WordResponseWithDate
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,17 +15,17 @@ import retrofit2.http.Path
 
 interface WordApiService {
     @GET("/api/v1/words/me")
-    suspend fun fetchAllWords(): Response<List<WordResponse>>
+    suspend fun fetchAllWords(): Response<List<WordResponseWithDate>>
     @POST("/api/v1/words")
-    suspend fun createWord(@Body createWordRequest: CreateWordRequest): WordResponse
+    suspend fun createWord(@Body createWordRequest: CreateWordRequest): WordData
     @PUT("/api/v1/words/{wordId}")
-    suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): WordResponse
+    suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): WordData
     @DELETE("/api/v1/words/{wordId}")
     suspend fun deleteWord(@Path("wordId") wordId: Long)
 
     @PUT("/api/v1/words/{wordId}/favorite")
     suspend fun updateWordFavorite(@Path("wordId") wordId: Long,
-                                   @Body updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordResponse
+                                   @Body updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData
     @PUT("/api/v1/words/{wordId}/review")
-    suspend fun updateWordReviewCount(@Path("wordId") wordId: Long): WordResponse
+    suspend fun updateWordReviewCount(@Path("wordId") wordId: Long): WordData
 }

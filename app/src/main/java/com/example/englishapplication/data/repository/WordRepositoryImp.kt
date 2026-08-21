@@ -4,13 +4,13 @@ import com.example.englishapplication.data.remote.WordApiService
 import com.example.englishapplication.domain.model.CreateWordRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
-import com.example.englishapplication.domain.model.WordResponse
+import com.example.englishapplication.domain.model.WordData
+import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
-import retrofit2.Response
 import javax.inject.Inject
 
 class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiService) : WordRepository {
-    override suspend fun getAllWords(): Result<List<WordResponse>> {
+    override suspend fun getAllWords(): Result<List<WordResponseWithDate>> {
         return try {
             val response = wordApiService.fetchAllWords()
             if(response.isSuccessful){
@@ -26,11 +26,11 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
 
     }
 
-    override suspend fun createWord(createWordRequest: CreateWordRequest): WordResponse {
+    override suspend fun createWord(createWordRequest: CreateWordRequest): WordData {
         return wordApiService.createWord(createWordRequest)
     }
 
-    override suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordResponse {
+    override suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordData {
         return wordApiService.updateWord(wordId, updateWordRequest)
     }
 
@@ -38,11 +38,11 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
         wordApiService.deleteWord(wordId)
     }
 
-    override suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordResponse {
+    override suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData {
         return wordApiService.updateWordFavorite(wordId,updateWordFavoriteRequest)
     }
 
-    override suspend fun updateReviewCountWord(wordId: Long): WordResponse {
+    override suspend fun updateReviewCountWord(wordId: Long): WordData {
         return wordApiService.updateWordReviewCount(wordId)
     }
 }

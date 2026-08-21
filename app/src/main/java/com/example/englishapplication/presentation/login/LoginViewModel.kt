@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
         _passwordVisible.value = !_passwordVisible.value
     }
     init {
-        //checkToken()
+        checkToken()
     }
     fun login() {
         viewModelScope.launch {

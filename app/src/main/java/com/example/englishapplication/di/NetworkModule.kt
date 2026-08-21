@@ -26,22 +26,8 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideOkHttpClient(encryptedTokenStorage: EncryptedTokenStorage): OkHttpClient{
-        return OkHttpClient.Builder().addInterceptor {
-            chain->
-            val originalRequest = chain.request()
-            val myToken = runBlocking {
-                encryptedTokenStorage.getAccessToken()
-            }
-            val requestBuilder = originalRequest.newBuilder()
-                .header("Accept","application/json")
-
-            if (!myToken.isNullOrEmpty()) {
-                requestBuilder.header("Authorization","Bearer $myToken")
-            }
-            
-            chain.proceed(requestBuilder.build())
-        }
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient{
+        return OkHttpClient.Builder().addInterceptor(authInterceptor)
             .build()
     }
     @Provides

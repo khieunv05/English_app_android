@@ -1,5 +1,6 @@
 package com.example.englishapplication.presentation.word_main_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.domain.model.WordData

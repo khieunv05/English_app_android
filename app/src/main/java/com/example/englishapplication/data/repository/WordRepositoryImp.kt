@@ -7,6 +7,7 @@ import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordData
 import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
+import com.example.englishapplication.util.HttpCodeHandler
 import javax.inject.Inject
 
 class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiService) : WordRepository {
@@ -17,7 +18,8 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
                 Result.success(response.body() ?: emptyList())
             }
             else{
-                Result.failure(Exception(response.errorBody()?.string() ?: "Lấy từ thất bại"))
+                val errorMsg = HttpCodeHandler.mapHttpErrorMessage(response.code())
+                Result.failure(Exception(errorMsg))
             }
         }
         catch (e: Exception){
@@ -45,4 +47,5 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
     override suspend fun updateReviewCountWord(wordId: Long): WordData {
         return wordApiService.updateWordReviewCount(wordId)
     }
+
 }

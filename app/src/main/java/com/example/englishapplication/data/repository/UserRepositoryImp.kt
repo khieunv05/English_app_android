@@ -5,6 +5,7 @@ import com.example.englishapplication.data.remote.UserApiService
 import com.example.englishapplication.domain.model.CreateUserRequest
 import com.example.englishapplication.domain.model.LoginRequest
 import com.example.englishapplication.domain.repository.UserRepository
+import com.example.englishapplication.util.HttpCodeHandler
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -31,7 +32,8 @@ class UserRepositoryImp @Inject constructor(private val userApiService: UserApiS
 
             }
             else{
-                Result.failure(Exception(response.errorBody()?.string() ?: "Đăng nhập thất bại"))
+                val message = HttpCodeHandler.mapHttpErrorMessage(response.code())
+                Result.failure(Exception(message))
             }
         }
         catch (e: Exception){
@@ -46,7 +48,8 @@ class UserRepositoryImp @Inject constructor(private val userApiService: UserApiS
                 Result.success(Unit)
             }
             else{
-                Result.failure(Exception(response.errorBody()?.string() ?: "Đăng ký thất bại"))
+                val message = HttpCodeHandler.mapHttpErrorMessage(response.code())
+                Result.failure(Exception(message))
             }
         }
         catch (e: Exception){

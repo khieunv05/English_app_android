@@ -11,6 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.englishapplication.presentation.add_word.AddWordScreen
+import com.example.englishapplication.presentation.add_word.AddWordViewModel
 import com.example.englishapplication.presentation.login.LoginScreen
 import com.example.englishapplication.presentation.login.LoginViewModel
 import com.example.englishapplication.presentation.sign_up.SignUpScreen
@@ -87,7 +89,16 @@ fun AppNavHost(
         }
         composable("wordMainScreen") {
             val wordMainScreenViewModel: WordMainScreenViewModel = hiltViewModel()
-            WordMainScreen(wordMainScreenViewModel)
+            WordMainScreen(wordMainScreenViewModel){
+                navController.navigate("addNewWord")
+            }
+        }
+        composable("addNewWord") {
+            val addWordViewModel: AddWordViewModel = hiltViewModel()
+            AddWordScreen(
+                viewModel = addWordViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }

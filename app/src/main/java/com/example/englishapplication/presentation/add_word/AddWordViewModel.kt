@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.data.local.EncryptedTokenStorage
 import com.example.englishapplication.domain.model.CreateWordRequest
+import com.example.englishapplication.domain.model.GeminiWordRequest
+import com.example.englishapplication.domain.repository.GeminiRepository
 import com.example.englishapplication.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddWordViewModel @Inject constructor(private val wordRepository: WordRepository,
-    private val encryptedTokenStorage: EncryptedTokenStorage ): ViewModel() {
+    private val encryptedTokenStorage: EncryptedTokenStorage,
+    private val geminiRepository: GeminiRepository): ViewModel() {
     private val _uiState = MutableStateFlow<AddWordUiState>(AddWordUiState.Idle)
     val uiState : StateFlow<AddWordUiState> = _uiState
 
@@ -69,7 +72,6 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
     fun addWord(){
         _uiState.value = AddWordUiState.Loading
         viewModelScope.launch {
-            try {
                 val createWordRequest = CreateWordRequest(
                     english = _englishTextField.value,
                     vietnamese = _vietnameseTextField.value,
@@ -80,17 +82,41 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
                     pronunciation = _pronunciationTextField.value
                 )
                 wordRepository.createWord(createWordRequest)
-                _englishTextField.value = ""
-                _vietnameseTextField.value = ""
-                _exampleTextField.value = ""
-                _exampleTranslationTextField.value = ""
-                _levelTextField.value = ""
-                _partOfSpeechTextField.value = ""
-                _pronunciationTextField.value = ""
-                _uiState.value = AddWordUiState.Success("Thêm từ mới thành công")
-            } catch (e: Exception) {
-                _uiState.value = AddWordUiState.Error(e.message ?: "Unknown error occurred")
-            }
+                    .onSuccess {
+                        _englishTextField.value = ""
+                        _vietnameseTextField.value = ""
+                        _exampleTextField.value = ""
+                        _exampleTranslationTextField.value = ""
+                        _levelTextField.value = ""
+                        _partOfSpeechTextField.value = ""
+                        _pronunciationTextField.value = ""
+                        _uiState.value = AddWordUiState.Success("Thêm từ mới thành công")
+                    }
+                    .onFailure {
+                        error->
+                        _uiState.value = AddWordUiState.Error(error.message ?: "Đã có lỗi xảy ra")
+                    }
+
+        }
+    }
+    fun generateWordInfo(){
+        _uiState.value = AddWordUiState.Loading
+        viewModelScope.launch {
+            val geminiWordRequest = GeminiWordRequest(_englishTextField.value)
+            geminiRepository.generateWordInfo(geminiWordRequest)
+                .onSuccess { wordData ->
+                    _englishTextField.value = wordData.english
+                    _vietnameseTextField.value = wordData.vietnamese
+                    _exampleTextField.value = wordData.example
+                    _exampleTranslationTextField.value = wordData.exampleTranslation
+                    _levelTextField.value = wordData.level
+                    _partOfSpeechTextField.value = wordData.partOfSpeech
+                    _pronunciationTextField.value = wordData.pronunciation
+                    _uiState.value = AddWordUiState.Idle
+                }
+                .onFailure { error ->
+                    _uiState.value = AddWordUiState.Error(error.message ?: "Không thể tự động tạo thông tin từ")
+                }
         }
     }
 

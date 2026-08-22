@@ -28,8 +28,20 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
 
     }
 
-    override suspend fun createWord(createWordRequest: CreateWordRequest): WordData {
-        return wordApiService.createWord(createWordRequest)
+    override suspend fun createWord(createWordRequest: CreateWordRequest): Result<WordData> {
+        return try {
+            val response = wordApiService.createWord(createWordRequest)
+            if(response.isSuccessful){
+                Result.success(response.body() ?: throw Exception("Response body is null"))
+            }
+            else{
+                val errorMsg = HttpCodeHandler.mapHttpErrorMessage(response.code())
+                Result.failure(Exception(errorMsg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     override suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordData {

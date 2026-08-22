@@ -26,7 +26,6 @@ class LocalDateTimeAdapter : JsonSerializer<LocalDateTime>, JsonDeserializer<Loc
         return try {
             LocalDateTime.parse(raw, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         } catch (e: Exception) {
-            // fallback nếu backend trả với số chữ số phần giây khác chuẩn ISO
             LocalDateTime.parse(raw)
         }
     }

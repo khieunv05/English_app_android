@@ -16,20 +16,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.englishapplication.domain.model.WordData
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WordMainScreen(
-    viewModel: WordMainScreenViewModel
+    viewModel: WordMainScreenViewModel,
+    onClickAdd: ()-> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val dailyWords by viewModel.userWords.collectAsState()
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val selectedTab = viewModel.selectedTab.collectAsState()
     val tabs = listOf("Tất cả", "Cần ôn tập")
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.loadData()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -44,7 +62,7 @@ fun WordMainScreen(
                     }
                 )
                 SecondaryTabRow(
-                    selectedTabIndex = selectedTab,
+                    selectedTabIndex = selectedTab.value,
                     modifier = Modifier,
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.primary,
@@ -52,13 +70,13 @@ fun WordMainScreen(
                     tabs = {
                         tabs.forEachIndexed { index, title ->
                             Tab(
-                                selected = selectedTab == index,
-                                onClick = { selectedTab = index },
+                                selected = selectedTab.value == index,
+                                onClick = { viewModel.onChangeSelectedTab(index) },
                                 text = { 
                                     Text(
                                         text = title,
                                         style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
+                                        fontWeight = if (selectedTab.value == index) FontWeight.Bold else FontWeight.Normal
                                     ) 
                                 }
                             )
@@ -69,7 +87,7 @@ fun WordMainScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Thêm từ mới */ },
+                onClick = { onClickAdd() },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = RoundedCornerShape(16.dp),

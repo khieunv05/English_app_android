@@ -17,7 +17,7 @@ interface WordApiService {
     @GET("/api/v1/words/me")
     suspend fun fetchAllWords(): Response<List<WordResponseWithDate>>
     @POST("/api/v1/words")
-    suspend fun createWord(@Body createWordRequest: CreateWordRequest): WordData
+    suspend fun createWord(@Body createWordRequest: CreateWordRequest): Response<WordData>
     @PUT("/api/v1/words/{wordId}")
     suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): WordData
     @DELETE("/api/v1/words/{wordId}")

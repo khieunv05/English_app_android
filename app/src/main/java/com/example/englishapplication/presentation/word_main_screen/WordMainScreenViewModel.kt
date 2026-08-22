@@ -1,9 +1,7 @@
 package com.example.englishapplication.presentation.word_main_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.englishapplication.domain.model.WordData
 import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +21,14 @@ class WordMainScreenViewModel @Inject constructor(
     private val _userWords = MutableStateFlow<List<WordResponseWithDate>>(emptyList())
 
     val userWords : StateFlow<List<WordResponseWithDate>> = _userWords
+
+    private val _selectedTab = MutableStateFlow(0)
+
+    val selectedTab : StateFlow<Int> = _selectedTab
+
+    fun onChangeSelectedTab(newTab : Int){
+        _selectedTab.value = newTab
+    }
 
     init {
         loadData()

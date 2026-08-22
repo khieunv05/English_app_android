@@ -6,4 +6,6 @@ data class GeminiWordResponse(
     val vietnamese: String,
     val example: String,
     val exampleTranslation: String,
+    val level: String,
+    val partOfSpeech: String
 )

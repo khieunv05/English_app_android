@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +15,10 @@ import com.example.englishapplication.presentation.add_word.AddWordScreen
 import com.example.englishapplication.presentation.add_word.AddWordViewModel
 import com.example.englishapplication.presentation.login.LoginScreen
 import com.example.englishapplication.presentation.login.LoginViewModel
+import com.example.englishapplication.presentation.main.MainScreen
+import com.example.englishapplication.presentation.main.MainScreenViewModel
 import com.example.englishapplication.presentation.sign_up.SignUpScreen
 import com.example.englishapplication.presentation.sign_up.SignUpViewModel
-import com.example.englishapplication.presentation.word_main_screen.WordMainScreen
-import com.example.englishapplication.presentation.word_main_screen.WordMainScreenViewModel
 import com.example.englishapplication.ui.theme.EnglishApplicationTheme
 import com.example.englishapplication.util.AuthEvent
 import com.example.englishapplication.util.AuthEventManager
@@ -69,7 +69,7 @@ fun AppNavHost(
             LoginScreen(
                 loginViewModel,
                 onLoginSuccess = {
-                    navController.navigate("wordMainScreen") {
+                    navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
@@ -87,18 +87,9 @@ fun AppNavHost(
                 }
             }
         }
-        composable("wordMainScreen") {
-            val wordMainScreenViewModel: WordMainScreenViewModel = hiltViewModel()
-            WordMainScreen(wordMainScreenViewModel){
-                navController.navigate("addNewWord")
-            }
-        }
-        composable("addNewWord") {
-            val addWordViewModel: AddWordViewModel = hiltViewModel()
-            AddWordScreen(
-                viewModel = addWordViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
+        composable("main") {
+            val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+            MainScreen()
         }
     }
 }

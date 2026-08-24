@@ -48,8 +48,20 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
         return wordApiService.updateWord(wordId, updateWordRequest)
     }
 
-    override suspend fun deleteWord(wordId: Long) {
-        wordApiService.deleteWord(wordId)
+    override suspend fun deleteWord(wordId: Long): Result<Unit> {
+        return try {
+            val response = wordApiService.deleteWord(wordId)
+            if(response.isSuccessful){
+                Result.success(Unit)
+            }
+            else{
+                val errorMsg = HttpCodeHandler.mapHttpErrorMessage(response.code())
+                Result.failure(Exception(errorMsg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     override suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData {

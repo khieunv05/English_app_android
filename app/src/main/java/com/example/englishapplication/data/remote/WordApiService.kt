@@ -21,7 +21,7 @@ interface WordApiService {
     @PUT("/api/v1/words/{wordId}")
     suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): WordData
     @DELETE("/api/v1/words/{wordId}")
-    suspend fun deleteWord(@Path("wordId") wordId: Long)
+    suspend fun deleteWord(@Path("wordId") wordId: Long): Response<Unit>
 
     @PUT("/api/v1/words/{wordId}/favorite")
     suspend fun updateWordFavorite(@Path("wordId") wordId: Long,

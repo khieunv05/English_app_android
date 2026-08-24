@@ -2,9 +2,11 @@ package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.englishapplication.presentation.add_word.AddWordScreen
 import com.example.englishapplication.presentation.add_word.AddWordViewModel
 
@@ -25,7 +27,13 @@ fun WordNavHost(){
                 }
             )
         }
-        composable("addWord") {
+        composable(route= "addWord?wordId={wordId}",
+            arguments = listOf(
+                navArgument("wordId"){
+                    type=NavType.LongType
+                    defaultValue=-1L
+                }
+            )) {
             val viewModel: AddWordViewModel = hiltViewModel()
             AddWordScreen(
                 viewModel = viewModel,

@@ -7,5 +7,5 @@ sealed interface WordMainScreenUiState {
     object Loading: WordMainScreenUiState
     data class Success(val wordResponse: List<WordResponseWithDate>): WordMainScreenUiState
     data class Error(val message: String): WordMainScreenUiState
-
+    data class DeleteSuccess(val message: String): WordMainScreenUiState
 }

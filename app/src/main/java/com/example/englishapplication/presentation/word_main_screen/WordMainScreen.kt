@@ -2,17 +2,21 @@ package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -136,7 +140,9 @@ fun WordMainScreen(
                                 }
                                 items(dailyEntry.words) { word ->
                                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                        WordItem(word)
+                                        WordItem(word){
+                                            wordId-> viewModel.deleteWord(wordId)
+                                        }
                                     }
                                 }
                             }
@@ -221,7 +227,9 @@ fun EmptyState(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WordItem(word: WordData) {
+fun WordItem(word: WordData,onClickDelete:(wordId: Long)-> Unit) {
+
+    var showDialog by rememberSaveable {mutableStateOf(false) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -252,19 +260,54 @@ fun WordItem(word: WordData) {
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
-                
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = word.partOfSpeech,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = word.partOfSpeech,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+
+
+                    }
+                    IconButton(
+                        onClick = { showDialog = true}
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Xóa",
+                            tint = Color.Red,
+                            modifier = Modifier.size(28.dp))
+                    }
+                    if (showDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showDialog = false },
+                            title = { Text("Xác nhận xóa") },
+                            text = { Text("Bạn có chắc chắn muốn xóa \"${word.english}\" không?") },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDialog = false
+                                        onClickDelete(word.id)
+                                    }
+                                ) {
+                                    Text("Có", color = Color.Red)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDialog = false }) {
+                                    Text("Không")
+                                }
+                            }
+                        )
+                    }
                 }
+
             }
             
             Spacer(modifier = Modifier.height(12.dp))

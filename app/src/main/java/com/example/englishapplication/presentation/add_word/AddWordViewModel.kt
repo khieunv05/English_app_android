@@ -1,5 +1,6 @@
 package com.example.englishapplication.presentation.add_word
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.data.local.EncryptedTokenStorage
@@ -16,9 +17,14 @@ import javax.inject.Inject
 @HiltViewModel
 class AddWordViewModel @Inject constructor(private val wordRepository: WordRepository,
     private val encryptedTokenStorage: EncryptedTokenStorage,
-    private val geminiRepository: GeminiRepository): ViewModel() {
+    private val geminiRepository: GeminiRepository,
+    savedStateHandle: SavedStateHandle): ViewModel() {
     private val _uiState = MutableStateFlow<AddWordUiState>(AddWordUiState.Idle)
     val uiState : StateFlow<AddWordUiState> = _uiState
+
+    private val wordId : Long = savedStateHandle.get<Long>("wordId")?: -1L
+
+    val isEditMode : Boolean = wordId != -1L
 
     private val _englishTextField = MutableStateFlow("")
     val englishTextField : StateFlow<String> = _englishTextField
@@ -118,6 +124,9 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
                     _uiState.value = AddWordUiState.Error(error.message ?: "Không thể tự động tạo thông tin từ")
                 }
         }
+    }
+    private fun loadWordForEdit(wordId: Long){
+
     }
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -48,6 +49,20 @@ class WordMainScreenViewModel @Inject constructor(
 
 
 
+        }
+    }
+    fun deleteWord(wordId: Long){
+        _uiState.value = WordMainScreenUiState.Loading
+
+        viewModelScope.launch {
+            val response = wordRepository.deleteWord(wordId)
+                .onSuccess {
+                    _uiState.value = WordMainScreenUiState.DeleteSuccess("Xóa dữ liệu thành công")
+                    loadData()
+                }
+                .onFailure { error ->
+                    _uiState.value = WordMainScreenUiState.Error(error.message ?: "Xóa dữ liệu thất bại")
+                }
         }
     }
 }

@@ -10,7 +10,7 @@ interface WordRepository {
     suspend fun getAllWords(): Result<List<WordResponseWithDate>>
     suspend fun createWord(createWordRequest: CreateWordRequest): Result<WordData>
     suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordData
-    suspend fun deleteWord(wordId: Long)
+    suspend fun deleteWord(wordId: Long): Result<Unit>
     suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData
     suspend fun updateReviewCountWord(wordId: Long): WordData
 

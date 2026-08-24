@@ -11,11 +11,5 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow<MainScreenUiState>(MainScreenUiState.Idle)
     val uiState : StateFlow<MainScreenUiState> = _uiState
 
-    private val _selectedTab = MutableStateFlow(MainScreenTabs.HOME)
 
-    val selectedTab : StateFlow<MainScreenTabs> = _selectedTab
-
-    fun onChangeSelectedTab(newTab : MainScreenTabs){
-        _selectedTab.value = newTab
-    }
 }

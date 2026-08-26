@@ -9,9 +9,9 @@ import com.example.englishapplication.domain.model.WordResponseWithDate
 interface WordRepository {
     suspend fun getAllWords(): Result<List<WordResponseWithDate>>
     suspend fun createWord(createWordRequest: CreateWordRequest): Result<WordData>
-    suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordData
+    suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): Result<WordData>
     suspend fun deleteWord(wordId: Long): Result<Unit>
     suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData
     suspend fun updateReviewCountWord(wordId: Long): WordData
-
+    suspend fun getWordById(wordId: Long): Result<WordData>
 }

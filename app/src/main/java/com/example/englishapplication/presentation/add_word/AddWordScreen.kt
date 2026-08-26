@@ -49,6 +49,7 @@ fun AddWordScreen(
     val level by viewModel.levelTextField.collectAsState()
     val example by viewModel.exampleTextField.collectAsState()
     val exampleTranslation by viewModel.exampleTranslationTextField.collectAsState()
+    val isEditMode = viewModel.isEditMode
 
     val snackbarHostState = remember { SnackbarHostState() }
     var pendingAction by remember { mutableStateOf(PendingAction.NONE) }
@@ -86,7 +87,7 @@ fun AddWordScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Thêm từ mới",
+                        if (isEditMode) "Chỉnh sửa từ" else "Thêm từ mới",
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -127,7 +128,12 @@ fun AddWordScreen(
                     Button(
                         onClick = {
                             pendingAction = PendingAction.SAVE
-                            viewModel.addWord()
+                            if(isEditMode){
+                                viewModel.updateWord()
+                            }
+                            else {
+                                viewModel.addWord()
+                            }
                         },
                         enabled = canSave,
                         modifier = Modifier
@@ -145,7 +151,7 @@ fun AddWordScreen(
                             Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "Thêm vào danh sách",
+                                if (isEditMode) "Cập nhật từ vựng" else "Thêm vào danh sách",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )

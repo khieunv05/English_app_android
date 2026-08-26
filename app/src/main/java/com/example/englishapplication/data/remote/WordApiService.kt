@@ -19,7 +19,7 @@ interface WordApiService {
     @POST("/api/v1/words")
     suspend fun createWord(@Body createWordRequest: CreateWordRequest): Response<WordData>
     @PUT("/api/v1/words/{wordId}")
-    suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): WordData
+    suspend fun updateWord(@Path("wordId") wordId: Long, @Body updateWordRequest: UpdateWordRequest): Response<WordData>
     @DELETE("/api/v1/words/{wordId}")
     suspend fun deleteWord(@Path("wordId") wordId: Long): Response<Unit>
 
@@ -28,4 +28,6 @@ interface WordApiService {
                                    @Body updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData
     @PUT("/api/v1/words/{wordId}/review")
     suspend fun updateWordReviewCount(@Path("wordId") wordId: Long): WordData
+    @GET("/api/v1/words/{wordId}")
+    suspend fun getWordById(@Path("wordId") wordId: Long): Response<WordData>
 }

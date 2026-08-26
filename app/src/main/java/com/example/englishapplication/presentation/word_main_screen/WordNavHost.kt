@@ -22,6 +22,9 @@ fun WordNavHost(){
             val viewModel: WordMainScreenViewModel = hiltViewModel()
             WordMainScreen(
                 viewModel = viewModel,
+                onClickWordItem = {
+                    wordId -> innerNavController.navigate("addWord?wordId=$wordId")
+                },
                 onClickAdd = {
                     innerNavController.navigate("addWord")
                 }

@@ -1,6 +1,7 @@
 package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +31,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun WordMainScreen(
     viewModel: WordMainScreenViewModel,
+    onClickWordItem:(wordId: Long)-> Unit,
     onClickAdd: ()-> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -140,7 +142,9 @@ fun WordMainScreen(
                                 }
                                 items(dailyEntry.words) { word ->
                                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                        WordItem(word){
+                                        WordItem(word, onClickWordItem = {
+                                            wordId->onClickWordItem(wordId)
+                                        }){
                                             wordId-> viewModel.deleteWord(wordId)
                                         }
                                     }
@@ -227,11 +231,15 @@ fun EmptyState(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WordItem(word: WordData,onClickDelete:(wordId: Long)-> Unit) {
+fun WordItem(word: WordData,onClickWordItem:(wordId: Long)-> Unit,onClickDelete:(wordId: Long)-> Unit) {
 
     var showDialog by rememberSaveable {mutableStateOf(false) }
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable(
+            enabled = true
+        ){
+            onClickWordItem(word.id)
+        },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)

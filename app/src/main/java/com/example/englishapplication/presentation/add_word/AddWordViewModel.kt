@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.data.local.EncryptedTokenStorage
 import com.example.englishapplication.domain.model.CreateWordRequest
 import com.example.englishapplication.domain.model.GeminiWordRequest
+import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.repository.GeminiRepository
 import com.example.englishapplication.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,12 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
     private val wordId : Long = savedStateHandle.get<Long>("wordId")?: -1L
 
     val isEditMode : Boolean = wordId != -1L
+
+    init {
+        if (isEditMode) {
+            loadWordForEdit(wordId)
+        }
+    }
 
     private val _englishTextField = MutableStateFlow("")
     val englishTextField : StateFlow<String> = _englishTextField
@@ -78,7 +85,7 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
     fun addWord(){
         _uiState.value = AddWordUiState.Loading
         viewModelScope.launch {
-                val createWordRequest = CreateWordRequest(
+            val createWordRequest = CreateWordRequest(
                     english = _englishTextField.value,
                     vietnamese = _vietnameseTextField.value,
                     example = _exampleTextField.value,
@@ -105,6 +112,27 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
 
         }
     }
+    fun updateWord(){
+        _uiState.value = AddWordUiState.Loading
+        viewModelScope.launch {
+            val updateWordRequest = UpdateWordRequest(
+                english = _englishTextField.value,
+                vietnamese = _vietnameseTextField.value,
+                example = _exampleTextField.value,
+                exampleTranslation = _exampleTranslationTextField.value,
+                level = _levelTextField.value,
+                partOfSpeech = _partOfSpeechTextField.value,
+                pronunciation = _pronunciationTextField.value
+            )
+            wordRepository.updateWord(wordId, updateWordRequest)
+                .onSuccess {
+                    _uiState.value = AddWordUiState.Success("Cập nhật từ thành công")
+                }
+                .onFailure { error ->
+                    _uiState.value = AddWordUiState.Error(error.message ?: "Cập nhật từ thất bại")
+                }
+        }
+    }
     fun generateWordInfo(){
         _uiState.value = AddWordUiState.Loading
         viewModelScope.launch {
@@ -126,7 +154,23 @@ class AddWordViewModel @Inject constructor(private val wordRepository: WordRepos
         }
     }
     private fun loadWordForEdit(wordId: Long){
-
+        _uiState.value = AddWordUiState.Loading
+        viewModelScope.launch {
+            wordRepository.getWordById(wordId)
+                .onSuccess { wordData ->
+                    _englishTextField.value = wordData.english
+                    _vietnameseTextField.value = wordData.vietnamese
+                    _exampleTextField.value = wordData.example
+                    _exampleTranslationTextField.value = wordData.exampleTranslation
+                    _levelTextField.value = wordData.level
+                    _partOfSpeechTextField.value = wordData.partOfSpeech
+                    _pronunciationTextField.value = wordData.pronunciation
+                    _uiState.value = AddWordUiState.Idle
+                }
+                .onFailure { error ->
+                    _uiState.value = AddWordUiState.Error(error.message ?: "Không thể tải thông tin từ")
+                }
+        }
     }
 
 }

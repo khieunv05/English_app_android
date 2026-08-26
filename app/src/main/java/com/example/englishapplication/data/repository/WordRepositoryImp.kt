@@ -44,8 +44,27 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
         }
     }
 
-    override suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): WordData {
-        return wordApiService.updateWord(wordId, updateWordRequest)
+    override suspend fun updateWord(wordId:Long,updateWordRequest: UpdateWordRequest): Result<WordData> {
+        return try{
+            val result = wordApiService.updateWord(wordId,updateWordRequest)
+            if(result.isSuccessful){
+                val body = result.body()
+                if(body!= null){
+                    Result.success(body)
+                }
+                else{
+                    Result.failure(Exception("Server trả về dữ liệu rỗng, vui lòng thử lại"))
+                }
+            }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     override suspend fun deleteWord(wordId: Long): Result<Unit> {
@@ -70,6 +89,28 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
 
     override suspend fun updateReviewCountWord(wordId: Long): WordData {
         return wordApiService.updateWordReviewCount(wordId)
+    }
+
+    override suspend fun getWordById(wordId: Long): Result<WordData> {
+        return try {
+            val result = wordApiService.getWordById(wordId)
+            if(result.isSuccessful){
+                val body = result.body()
+                if(body != null){
+                    Result.success(body)
+                }
+                else{
+                    Result.failure(Exception("Server trả về dữ liệu rỗng, vui lòng thử lại"))
+                }
+            }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(Exception(e))
+        }
     }
 
 }

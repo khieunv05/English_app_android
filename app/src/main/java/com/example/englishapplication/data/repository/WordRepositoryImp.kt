@@ -2,6 +2,7 @@ package com.example.englishapplication.data.repository
 
 import com.example.englishapplication.data.remote.WordApiService
 import com.example.englishapplication.domain.model.CreateWordRequest
+import com.example.englishapplication.domain.model.ListWordUpdateRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordData
@@ -94,6 +95,28 @@ class WordRepositoryImp @Inject constructor(private val wordApiService: WordApiS
     override suspend fun getWordById(wordId: Long): Result<WordData> {
         return try {
             val result = wordApiService.getWordById(wordId)
+            if(result.isSuccessful){
+                val body = result.body()
+                if(body != null){
+                    Result.success(body)
+                }
+                else{
+                    Result.failure(Exception("Server trả về dữ liệu rỗng, vui lòng thử lại"))
+                }
+            }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(Exception(e))
+        }
+    }
+
+    override suspend fun updateListWordUpdate(wordIds: ListWordUpdateRequest): Result<List<WordData>> {
+        return try {
+            val result = wordApiService.updateListWordUpdate(wordIds)
             if(result.isSuccessful){
                 val body = result.body()
                 if(body != null){

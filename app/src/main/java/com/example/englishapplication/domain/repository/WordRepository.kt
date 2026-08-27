@@ -1,6 +1,7 @@
 package com.example.englishapplication.domain.repository
 
 import com.example.englishapplication.domain.model.CreateWordRequest
+import com.example.englishapplication.domain.model.ListWordUpdateRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordData
@@ -14,4 +15,5 @@ interface WordRepository {
     suspend fun updateWordFavorite(wordId: Long,updateWordFavoriteRequest: UpdateWordFavoriteRequest): WordData
     suspend fun updateReviewCountWord(wordId: Long): WordData
     suspend fun getWordById(wordId: Long): Result<WordData>
+    suspend fun updateListWordUpdate(wordIds: ListWordUpdateRequest): Result<List<WordData>>
 }

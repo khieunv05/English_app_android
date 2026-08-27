@@ -35,11 +35,11 @@ fun WordMainScreen(
     onClickAdd: ()-> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val dailyWords by viewModel.userWords.collectAsState()
+    val dailyWords by viewModel.filteredWords.collectAsState()
     val selectedTab = viewModel.selectedTab.collectAsState()
     val tabs = listOf("Tất cả", "Cần ôn tập")
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-
+    val listWordUpdate by viewModel.listWordReview.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner) {

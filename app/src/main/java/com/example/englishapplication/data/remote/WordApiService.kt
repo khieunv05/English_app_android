@@ -1,6 +1,7 @@
 package com.example.englishapplication.data.remote
 
 import com.example.englishapplication.domain.model.CreateWordRequest
+import com.example.englishapplication.domain.model.ListWordUpdateRequest
 import com.example.englishapplication.domain.model.UpdateWordFavoriteRequest
 import com.example.englishapplication.domain.model.UpdateWordRequest
 import com.example.englishapplication.domain.model.WordData
@@ -30,4 +31,7 @@ interface WordApiService {
     suspend fun updateWordReviewCount(@Path("wordId") wordId: Long): WordData
     @GET("/api/v1/words/{wordId}")
     suspend fun getWordById(@Path("wordId") wordId: Long): Response<WordData>
+
+    @PUT("/api/v1/words/review")
+    suspend fun updateListWordUpdate(@Body wordIds: ListWordUpdateRequest): Response<List<WordData>>
 }

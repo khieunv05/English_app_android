@@ -8,11 +8,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.englishapplication.presentation.paragraph_main.ParagraphMainScreen
+import com.example.englishapplication.presentation.paragraph_main.ParagraphMainViewModel
 import com.example.englishapplication.presentation.word_main_screen.WordNavHost
 
 @Composable
@@ -69,6 +72,10 @@ fun MainScreen() {
                 }
                 composable(MainScreenTabs.WORD.route) {
                     WordNavHost()
+                }
+                composable(MainScreenTabs.PARAGRAPH.route) {
+                    val viewModel: ParagraphMainViewModel = hiltViewModel()
+                    ParagraphMainScreen(viewModel)
                 }
             }
         }

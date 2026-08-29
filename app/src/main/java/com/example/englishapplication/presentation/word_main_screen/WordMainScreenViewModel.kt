@@ -30,9 +30,9 @@ class WordMainScreenViewModel @Inject constructor(
 
     val userWords : StateFlow<List<WordResponseWithDate>> = _userWords
 
-    private val _listWordReview = MutableStateFlow<MutableList<Long>>(mutableListOf())
+    private val _listWordReview = MutableStateFlow<Set<Long>>(emptySet())
 
-    val listWordReview : StateFlow<MutableList<Long>> = _listWordReview
+    val listWordReview : StateFlow<Set<Long>> = _listWordReview
 
     private val _selectedTab = MutableStateFlow(0)
 
@@ -40,6 +40,7 @@ class WordMainScreenViewModel @Inject constructor(
 
     fun onChangeSelectedTab(newTab : Int){
         _selectedTab.value = newTab
+        _listWordReview.value = emptySet()
     }
 
     init {
@@ -100,10 +101,11 @@ class WordMainScreenViewModel @Inject constructor(
     fun updateListWordReview(){
         _uiState.value = WordMainScreenUiState.Loading
         viewModelScope.launch {
-            val wordIds = _listWordReview.value
+            val wordIds = _listWordReview.value.toList()
             val listWordUpdateReview = ListWordUpdateRequest(wordIds)
             val response = wordRepository.updateListWordUpdate(listWordUpdateReview)
                 .onSuccess {
+                    _listWordReview.value = emptySet()
                     _uiState.value = WordMainScreenUiState.UpdateSuccess("Cập nhật thành công")
                     loadData()
                 }
@@ -112,10 +114,9 @@ class WordMainScreenViewModel @Inject constructor(
                 }
         }
     }
-    fun addWordIdToListUpdate(id: Long){
-        _listWordReview.value.add(id)
-    }
-    fun removeWordIdFromListUpdate(id: Long){
-        _listWordReview.value.remove(id)
+    fun toggleWordReview(id: Long){
+        _listWordReview.value = _listWordReview.value.let {
+            if (id in it) it - id else it + id
+        }
     }
 }

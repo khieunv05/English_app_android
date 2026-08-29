@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ClaudeCodeEditorTabs">
-    <option name="activeSessionId" value="612e12f7-47fe-482d-accc-67fd940fce30" />
+    <option name="activeSessionId" value="a4508911-7bb4-41d5-9fbf-1653fff1109a" />
     <option name="openSessionIds">
       <list>
         <option value="9ef76b10-5d90-4f0f-b1e6-8f4441da74ef" />
@@ -12,22 +12,34 @@
         <option value="13dd39aa-ed67-4421-b2f0-b5ecae5ddd6f" />
         <option value="6541b1f0-e57a-4e76-af3f-1f7ee1b19916" />
         <option value="612e12f7-47fe-482d-accc-67fd940fce30" />
+        <option value="28bf446f-31a7-4e91-a854-66d2d839d4bc" />
+        <option value="c6118c3b-aab0-4c93-bf89-843bfadc9187" />
+        <option value="d21b990b-f3c2-4d93-9ff2-6b781d61fb7c" />
+        <option value="a4508911-7bb4-41d5-9fbf-1653fff1109a" />
       </list>
     </option>
     <option name="sessionPaths">
       <map>
         <entry key="13dd39aa-ed67-4421-b2f0-b5ecae5ddd6f" value="/sessions/a9c62b1a-07ef-4bbb-a9e6-3b224a765148" />
+        <entry key="28bf446f-31a7-4e91-a854-66d2d839d4bc" value="/sessions/cb76cea3-2054-4e8d-add1-e32a9970900b" />
         <entry key="612e12f7-47fe-482d-accc-67fd940fce30" value="/sessions/684039b9-8c17-48ae-96c1-6f4249695492" />
         <entry key="6541b1f0-e57a-4e76-af3f-1f7ee1b19916" value="/sessions/new" />
         <entry key="9427f91a-c384-4073-bb15-6275557a7ac4" value="/sessions/a9c62b1a-07ef-4bbb-a9e6-3b224a765148" />
+        <entry key="a4508911-7bb4-41d5-9fbf-1653fff1109a" value="/sessions/fc236213-2326-4f49-8816-bcadae24e03d" />
+        <entry key="c6118c3b-aab0-4c93-bf89-843bfadc9187" value="/sessions/eada34fd-e623-4157-a05c-75affcdd1f67" />
+        <entry key="d21b990b-f3c2-4d93-9ff2-6b781d61fb7c" value="/sessions/1a67693b-5549-41ea-896f-308147b7a832" />
       </map>
     </option>
     <option name="sessionTitles">
       <map>
         <entry key="13dd39aa-ed67-4421-b2f0-b5ecae5ddd6f" value="Hello" />
+        <entry key="28bf446f-31a7-4e91-a854-66d2d839d4bc" value="Viết giúp tôi màn hình word main screen, khi đang" />
         <entry key="612e12f7-47fe-482d-accc-67fd940fce30" value="Xin chào" />
         <entry key="6541b1f0-e57a-4e76-af3f-1f7ee1b19916" value="Claude Code" />
         <entry key="9427f91a-c384-4073-bb15-6275557a7ac4" value="Hello" />
+        <entry key="a4508911-7bb4-41d5-9fbf-1653fff1109a" value="Viết giúp tôi giao diện ParagraphMainScreen, màn h" />
+        <entry key="c6118c3b-aab0-4c93-bf89-843bfadc9187" value="Viết giúp tôi màn hình word main screen, khi đang" />
+        <entry key="d21b990b-f3c2-4d93-9ff2-6b781d61fb7c" value="Viết giúp tôi màn hình word main screen, khi đang" />
       </map>
     </option>
   </component>

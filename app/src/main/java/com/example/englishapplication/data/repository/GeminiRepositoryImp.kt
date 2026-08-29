@@ -1,6 +1,8 @@
 package com.example.englishapplication.data.repository
 
 import com.example.englishapplication.data.remote.GeminiApiService
+import com.example.englishapplication.domain.model.GeminiPhraseRequest
+import com.example.englishapplication.domain.model.GeminiPhraseResponse
 import com.example.englishapplication.domain.model.GeminiWordRequest
 import com.example.englishapplication.domain.model.GeminiWordResponse
 import com.example.englishapplication.domain.repository.GeminiRepository
@@ -30,5 +32,9 @@ class GeminiRepositoryImp @Inject constructor(
         catch (e: Exception){
             Result.failure(Exception(e))
         }
+    }
+
+    override suspend fun scoreParagraph(geminiPhraseRequest: GeminiPhraseRequest): Result<GeminiPhraseResponse> {
+        TODO("Not yet implemented")
     }
 }

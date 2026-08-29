@@ -1,6 +1,7 @@
 package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,6 +43,7 @@ fun WordMainScreen(
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val listWordUpdate by viewModel.listWordReview.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val isReviewMode = selectedTab.value == 1
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -92,14 +95,26 @@ fun WordMainScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onClickAdd() },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(16.dp),
-                elevation = FloatingActionButtonDefaults.elevation(8.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Thêm từ mới", modifier = Modifier.size(28.dp))
+            if (isReviewMode && listWordUpdate.isNotEmpty()) {
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.updateListWordReview() },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    icon = { Icon(Icons.Default.Check, contentDescription = null) },
+                    text = { Text("Xác nhận đã ôn (${listWordUpdate.size})") }
+                )
+            } else {
+                FloatingActionButton(
+                    onClick = { onClickAdd() },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Thêm từ mới", modifier = Modifier.size(28.dp))
+                }
             }
         }
     ) { paddingValues ->
@@ -142,11 +157,16 @@ fun WordMainScreen(
                                 }
                                 items(dailyEntry.words) { word ->
                                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                        WordItem(word, onClickWordItem = {
-                                            wordId->onClickWordItem(wordId)
-                                        }){
-                                            wordId-> viewModel.deleteWord(wordId)
-                                        }
+                                        WordItem(
+                                            word = word,
+                                            isReviewMode = isReviewMode,
+                                            isChecked = word.id in listWordUpdate,
+                                            onClickWordItem = { wordId ->
+                                                if (isReviewMode) viewModel.toggleWordReview(wordId)
+                                                else onClickWordItem(wordId)
+                                            },
+                                            onClickDelete = { wordId -> viewModel.deleteWord(wordId) }
+                                        )
                                     }
                                 }
                             }
@@ -231,18 +251,38 @@ fun EmptyState(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WordItem(word: WordData,onClickWordItem:(wordId: Long)-> Unit,onClickDelete:(wordId: Long)-> Unit) {
+fun WordItem(
+    word: WordData,
+    isReviewMode: Boolean = false,
+    isChecked: Boolean = false,
+    onClickWordItem: (wordId: Long) -> Unit,
+    onClickDelete: (wordId: Long) -> Unit
+) {
 
     var showDialog by rememberSaveable {mutableStateOf(false) }
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(
-            enabled = true
-        ){
-            onClickWordItem(word.id)
-        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (isReviewMode && isChecked)
+                    Modifier.border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                else Modifier
+            )
+            .clickable(
+                enabled = true
+            ){
+                onClickWordItem(word.id)
+            },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            containerColor = if (isReviewMode && isChecked)
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+            else
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -271,6 +311,12 @@ fun WordItem(word: WordData,onClickWordItem:(wordId: Long)-> Unit,onClickDelete:
 
                 Row(verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
+                    if (isReviewMode) {
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { onClickWordItem(word.id) }
+                        )
+                    }
                     Surface(
                         color = MaterialTheme.colorScheme.secondaryContainer,
                         shape = RoundedCornerShape(8.dp)

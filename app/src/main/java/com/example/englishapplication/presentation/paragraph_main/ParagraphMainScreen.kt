@@ -250,7 +250,7 @@ private fun ScoreBadge(score: Int, color: Color) {
     }
 }
 
-private fun scoreColor(score: Int): Color = when {
+internal fun scoreColor(score: Int): Color = when {
     score >= 8 -> Color(0xFF2E7D32)
     score >= 5 -> Color(0xFFF57C00)
     else -> Color(0xFFC62828)

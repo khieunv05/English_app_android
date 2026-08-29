@@ -5,4 +5,5 @@ sealed interface AddParagraphUiState {
     object Loading: AddParagraphUiState
     data class Success(val msg: String): AddParagraphUiState
     data class Error(val msg: String): AddParagraphUiState
+    object FindSuccess: AddParagraphUiState
 }

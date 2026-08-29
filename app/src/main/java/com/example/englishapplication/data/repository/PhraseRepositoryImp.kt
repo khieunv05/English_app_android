@@ -52,4 +52,24 @@ class PhraseRepositoryImp @Inject constructor(private val phraseApiService: Phra
     override suspend fun deletePhrase(phraseId: Long) {
         return phraseApiService.deletePhrase(phraseId)
     }
+
+    override suspend fun findPhraseById(phraseId: Long): Result<PhraseResponse> {
+        return try {
+            val result= phraseApiService.getPhraseById(phraseId)
+            if(result.isSuccessful){
+                val body = result.body()
+                if(body != null){
+                    Result.success(body)
+                }
+                else Result.failure(Exception("Server trả về dữ liệu rỗng, vui lòng thử lại"))
+            }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.englishapplication.presentation.paragraph_add
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.englishapplication.domain.model.CreatePhraseRequest
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddParagraphViewModel @Inject constructor(
     private val phraseRepository: PhraseRepository,
-    private val geminiRepository: GeminiRepository
+    private val geminiRepository: GeminiRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(){
     private val _uiState = MutableStateFlow<AddParagraphUiState>(AddParagraphUiState.Idle)
 
@@ -28,6 +30,8 @@ class AddParagraphViewModel @Inject constructor(
 
     val text : StateFlow<String> = _text
 
+    private val _phraseId: Long = savedStateHandle.get<Long>("phraseId") ?: -1L
+
     private val _geminiPhraseResponse = MutableStateFlow<GeminiPhraseResponse?>(null)
 
     private val _phraseResponse = MutableStateFlow<PhraseResponse?>(null)
@@ -36,6 +40,10 @@ class AddParagraphViewModel @Inject constructor(
 
     fun onTextChange(value: String){
         _text.value = value
+    }
+
+    fun resetState() {
+        _uiState.value = AddParagraphUiState.Idle
     }
 
     fun saveParagraph() {
@@ -70,17 +78,41 @@ class AddParagraphViewModel @Inject constructor(
 
         }
     }
-    fun scoreParagraph() {
+    suspend fun scoreParagraph() {
+        val geminiPhraseRequest = GeminiPhraseRequest(_text.value)
+        geminiRepository.scoreParagraph(geminiPhraseRequest)
+            .onSuccess { data ->
+                _geminiPhraseResponse.value = GeminiPhraseResponse(
+                    data.text,
+                    data.score, data.grammarErrors, data.correctedText
+                )
+            }
+            .onFailure {
+                _geminiPhraseResponse.value = null
+            }
+    }
+
+    init {
+        if(_phraseId != -1L){
+            loadPhraseDetail()
+        }
+    }
+    fun loadPhraseDetail(){
+        _uiState.value = AddParagraphUiState.Loading
         viewModelScope.launch {
-            val geminiPhraseRequest = GeminiPhraseRequest(_text.value)
-            val response = geminiRepository.scoreParagraph(geminiPhraseRequest)
-                .onSuccess { data->
-                    _geminiPhraseResponse.value = GeminiPhraseResponse(data.text,
-                        data.score,data.grammarErrors,data.correctedText)
-                }
-                .onFailure { error->
-                    _geminiPhraseResponse.value = null
-                }
+            if(_phraseId != -1L){
+                phraseRepository.findPhraseById(_phraseId)
+                    .onSuccess {
+                        _phraseResponse.value = it
+                        _uiState.value = AddParagraphUiState.FindSuccess
+                    }
+                    .onFailure {
+                        _uiState.value = AddParagraphUiState.Error("Lỗi khi lấy dữ liệu")
+                    }
+            }
+            else{
+                _uiState.value = AddParagraphUiState.Error("Lỗi khi lấy dữ liệu")
+            }
         }
     }
 

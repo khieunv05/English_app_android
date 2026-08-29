@@ -35,6 +35,24 @@ class GeminiRepositoryImp @Inject constructor(
     }
 
     override suspend fun scoreParagraph(geminiPhraseRequest: GeminiPhraseRequest): Result<GeminiPhraseResponse> {
-        TODO("Not yet implemented")
+        return try {
+            val result = geminiApiService.scoreParagraph(geminiPhraseRequest)
+            if(result.isSuccessful){
+                val body = result.body()
+                if(body != null){
+                    Result.success(body)
+                }
+                else{
+                    Result.failure(Exception("Server trả về dữ liệu rỗng, vui lòng thử lại"))
+                }
+            }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(Exception(e))
+        }
     }
 }

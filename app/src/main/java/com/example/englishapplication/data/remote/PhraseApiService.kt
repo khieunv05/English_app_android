@@ -13,7 +13,7 @@ interface PhraseApiService {
     @GET("/api/v1/phrases")
     suspend fun getAllPhrases(): Response<List<PhraseResponse>>
     @POST("/api/v1/phrases")
-    suspend fun createPhrase(@Body createPhraseRequest: CreatePhraseRequest): PhraseResponse
+    suspend fun createPhrase(@Body createPhraseRequest: CreatePhraseRequest): Response<PhraseResponse>
     @DELETE("/api/v1/phrases/{phraseId}")
     suspend fun deletePhrase(@Path("phraseId") phraseId: Long)
 }

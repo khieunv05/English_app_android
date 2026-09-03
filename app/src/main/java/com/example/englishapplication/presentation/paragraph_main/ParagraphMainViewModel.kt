@@ -41,6 +41,19 @@ class ParagraphMainViewModel @Inject constructor(
                 }
         }
     }
+    fun deleteParagraph(id: Long){
+        _uiState.value = ParagraphMainUiState.Loading
+        viewModelScope.launch {
+            phraseRepository.deletePhrase(id)
+                .onSuccess {
+                    _uiState.value = ParagraphMainUiState.DeleteSuccess("Xóa thành công")
+                    getAllParagraphs()
+                }
+                .onFailure {error->
+                    _uiState.value = ParagraphMainUiState.Error(error.message ?: "Đã có lỗi xảy ra")
+                }
+        }
+    }
 
 
 }

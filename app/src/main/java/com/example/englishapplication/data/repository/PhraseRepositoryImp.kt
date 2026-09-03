@@ -49,8 +49,21 @@ class PhraseRepositoryImp @Inject constructor(private val phraseApiService: Phra
         }
     }
 
-    override suspend fun deletePhrase(phraseId: Long) {
-        return phraseApiService.deletePhrase(phraseId)
+    override suspend fun deletePhrase(phraseId: Long): Result<Unit> {
+        return try {
+            val result = phraseApiService.deletePhrase(phraseId)
+            if(result.isSuccessful){
+              Result.success(Unit)
+             }
+            else{
+                val msg = HttpCodeHandler.mapHttpErrorMessage(result.code())
+                Result.failure(Exception(msg))
+            }
+
+        }
+        catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     override suspend fun findPhraseById(phraseId: Long): Result<PhraseResponse> {

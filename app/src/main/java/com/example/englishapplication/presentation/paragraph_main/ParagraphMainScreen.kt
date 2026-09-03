@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
@@ -126,6 +127,9 @@ fun ParagraphMainScreen(
                                 ParagraphItem(
                                     paragraph = paragraph,
                                     dateText = paragraph.createdAt.format(dateFormatter),
+                                    onDeleteClick = {
+                                        id->viewModel.deleteParagraph(id)
+                                    },
                                     onClick = { onClickParagraph(paragraph.id) }
                                 )
                             }
@@ -141,6 +145,7 @@ fun ParagraphMainScreen(
 private fun ParagraphItem(
     paragraph: PhraseResponse,
     dateText: String,
+    onDeleteClick:(id: Long)-> Unit,
     onClick: () -> Unit
 ) {
     val scoreColor = scoreColor(paragraph.score)
@@ -221,6 +226,15 @@ private fun ParagraphItem(
                         }
                     }
                 }
+
+            }
+            IconButton(
+                onClick = {
+                    onDeleteClick(paragraph.id)
+                }
+            ) {
+                Icon(Icons.Default.Delete, contentDescription = "Xóa",
+                    tint =Color.Red)
             }
         }
     }

@@ -7,4 +7,5 @@ sealed interface ParagraphMainUiState {
     object Loading: ParagraphMainUiState
     object Success: ParagraphMainUiState
     data class Error(val msg: String): ParagraphMainUiState
+    data class DeleteSuccess(val msg: String): ParagraphMainUiState
 }

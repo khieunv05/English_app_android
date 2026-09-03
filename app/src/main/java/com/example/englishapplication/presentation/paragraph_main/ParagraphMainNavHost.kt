@@ -39,7 +39,6 @@ fun ParagraphMainNavHost(){
             arguments = listOf(navArgument("phraseId") { type = NavType.LongType; defaultValue = -1L })
         ) { entry ->
             val phraseId = entry.arguments?.getLong("phraseId")
-            // reuse the AddParagraph VM instance that holds the scored result
             if(phraseId == -1L){
                 val parentEntry = remember(entry) {
                     innerController.getBackStackEntry("addParagraph")

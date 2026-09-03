@@ -15,7 +15,7 @@ interface PhraseApiService {
     @POST("/api/v1/phrases")
     suspend fun createPhrase(@Body createPhraseRequest: CreatePhraseRequest): Response<PhraseResponse>
     @DELETE("/api/v1/phrases/{phraseId}")
-    suspend fun deletePhrase(@Path("phraseId") phraseId: Long)
+    suspend fun deletePhrase(@Path("phraseId") phraseId: Long): Response<Unit>
 
     @GET("/api/v1/phrases/{phraseId}")
     suspend fun getPhraseById(@Path("phraseId") phraseId: Long): Response<PhraseResponse>

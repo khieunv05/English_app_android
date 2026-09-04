@@ -74,5 +74,6 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.datastore.preferences.v121)
+    implementation(libs.mlkit.text.recognition)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

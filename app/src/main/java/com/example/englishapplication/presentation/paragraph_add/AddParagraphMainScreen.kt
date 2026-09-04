@@ -1,5 +1,7 @@
 package com.example.englishapplication.presentation.paragraph_add
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,12 +11,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import java.io.File
+import kotlinx.coroutines.launch
 
 private const val MIN_LENGTH = 20
 
@@ -31,6 +41,49 @@ fun AddParagraphMainScreen(
 
     val isLoading = uiState is AddParagraphUiState.Loading
     val canSubmit = text.trim().length >= MIN_LENGTH && !isLoading
+
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val notify: (String) -> Unit = { msg ->
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(msg)
+        }
+    }
+    var scanning by remember { mutableStateOf(false) }
+    val recognizer = remember { TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) }
+    DisposableEffect(Unit) { onDispose { recognizer.close() } }
+
+    val photoUri = remember {
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            File(context.cacheDir, "ocr_capture.jpg")
+        )
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (!success) return@rememberLauncherForActivityResult
+        val image = runCatching { InputImage.fromFilePath(context, photoUri) }.getOrElse {
+            notify("Không đọc được ảnh vừa chụp")
+            return@rememberLauncherForActivityResult
+        }
+        scanning = true
+        recognizer.process(image)
+            .addOnSuccessListener { result ->
+                scanning = false
+                if (result.text.isBlank()) {
+                    notify("Không tìm thấy chữ trong ảnh")
+                } else {
+                    viewModel.onTextChange(mergeScannedText(text, result.text))
+                }
+            }
+            .addOnFailureListener {
+                scanning = false
+                notify("Nhận diện chữ thất bại")
+            }
+    }
 
     LaunchedEffect(uiState, phraseResponse) {
         if (uiState is AddParagraphUiState.Success && phraseResponse != null) {
@@ -57,6 +110,30 @@ fun AddParagraphMainScreen(
                                 contentDescription = "Quay lại"
                             )
                         }
+                    },
+                    actions = {
+                        if (scanning) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .padding(end = 14.dp)
+                                    .size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            IconButton(
+                                onClick = {
+                                    runCatching { cameraLauncher.launch(photoUri) }.onFailure {
+                                        notify("Không mở được camera")
+                                    }
+                                },
+                                enabled = !isLoading
+                            ) {
+                                Icon(
+                                    Icons.Default.PhotoCamera,
+                                    contentDescription = "Chụp ảnh để nhận diện chữ"
+                                )
+                            }
+                        }
                     }
                 )
                 HorizontalDivider(
@@ -64,7 +141,8 @@ fun AddParagraphMainScreen(
                     color = MaterialTheme.colorScheme.outlineVariant
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -171,4 +249,11 @@ fun AddParagraphMainScreen(
             }
         }
     }
+}
+
+// ponytail: line breaks collapsed to spaces so a photographed paragraph lands as one block.
+// Scanning several paragraphs at once merges them; split by hand if that matters.
+internal fun mergeScannedText(current: String, scanned: String): String {
+    val cleaned = scanned.replace(Regex("\\s*\\n\\s*"), " ").trim()
+    return if (current.isBlank()) cleaned else "${current.trimEnd()} $cleaned"
 }

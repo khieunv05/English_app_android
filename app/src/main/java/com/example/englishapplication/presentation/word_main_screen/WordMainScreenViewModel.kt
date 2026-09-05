@@ -6,6 +6,8 @@ import com.example.englishapplication.domain.model.ListWordUpdateRequest
 import com.example.englishapplication.domain.model.WordData
 import com.example.englishapplication.domain.model.WordResponseWithDate
 import com.example.englishapplication.domain.repository.WordRepository
+import com.example.englishapplication.util.NavigationEvent
+import com.example.englishapplication.util.NavigationEventManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,9 @@ import kotlin.collections.emptyList
 
 @HiltViewModel
 class WordMainScreenViewModel @Inject constructor(
-    private val wordRepository: WordRepository
+    private val wordRepository: WordRepository,
+    private val navigationEventManager: NavigationEventManager
+
 ): ViewModel(){
     private val _uiState = MutableStateFlow<WordMainScreenUiState>(WordMainScreenUiState.Idle)
 

@@ -75,5 +75,9 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.datastore.preferences.v121)
     implementation(libs.mlkit.text.recognition)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
 }

@@ -1,6 +1,7 @@
 package com.example.englishapplication.presentation.word_main_screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,7 +12,7 @@ import com.example.englishapplication.presentation.add_word.AddWordScreen
 import com.example.englishapplication.presentation.add_word.AddWordViewModel
 
 @Composable
-fun WordNavHost(){
+fun WordNavHost(initialTab: Int = 0) {
     val innerNavController = rememberNavController()
 
     NavHost(
@@ -20,6 +21,9 @@ fun WordNavHost(){
     ) {
         composable("wordMain") {
             val viewModel: WordMainScreenViewModel = hiltViewModel()
+            LaunchedEffect(initialTab) {
+                if (initialTab == 1) viewModel.onChangeSelectedTab(1)
+            }
             WordMainScreen(
                 viewModel = viewModel,
                 onClickWordItem = {

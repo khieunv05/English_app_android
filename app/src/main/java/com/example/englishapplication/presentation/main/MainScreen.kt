@@ -14,18 +14,36 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.englishapplication.permission.post_notification.NotificationPermissionRequest
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainNavHost
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainScreen
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainViewModel
 import com.example.englishapplication.presentation.word_main_screen.WordNavHost
+import com.example.englishapplication.util.NavigationEvent
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainScreenViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvents.collect { event ->
+            if (event is NavigationEvent.NavigationToReviewTab) {
+                navController.navigate("${MainScreenTabs.WORD.route}?tab=1") {
+                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+    }
+
+    NotificationPermissionRequest()
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -71,8 +89,11 @@ fun MainScreen() {
                 composable(MainScreenTabs.HOME.route) {
                     HomeContent(modifier = Modifier.align(Alignment.Center))
                 }
-                composable(MainScreenTabs.WORD.route) {
-                    WordNavHost()
+                composable(
+                    route = "${MainScreenTabs.WORD.route}?tab={tab}",
+                    arguments = listOf(navArgument("tab") { defaultValue = 0 })
+                ) {
+                    WordNavHost(initialTab = it.arguments?.getInt("tab") ?: 0)
                 }
                 composable(MainScreenTabs.PARAGRAPH.route) {
                     ParagraphMainNavHost()

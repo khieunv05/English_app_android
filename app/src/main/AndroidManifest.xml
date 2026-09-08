@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -25,6 +27,19 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.QuickAddWordActivity"
+            android:exported="true"
+            android:label="Thêm vào từ điển"
+            android:theme="@style/Theme.Transparent"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -45,6 +60,17 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+        <receiver
+            android:name=".util.ReminderReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".util.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

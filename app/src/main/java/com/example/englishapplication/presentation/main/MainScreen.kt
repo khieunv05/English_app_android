@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.englishapplication.permission.post_notification.ExactAlarmPermissionRequest
 import com.example.englishapplication.permission.post_notification.NotificationPermissionRequest
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainNavHost
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainScreen
@@ -30,20 +31,20 @@ fun MainScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvents.collect { event ->
-            if (event is NavigationEvent.NavigationToReviewTab) {
+    val navigationEvent by viewModel.navigationEvents.collectAsState()
+    LaunchedEffect(navigationEvent) {
+            if (navigationEvent is NavigationEvent.NavigationToReviewTab) {
                 navController.navigate("${MainScreenTabs.WORD.route}?tab=1") {
                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                     launchSingleTop = true
                     restoreState = true
                 }
+                viewModel.onNavigationHandled()
             }
-        }
     }
 
     NotificationPermissionRequest()
+    ExactAlarmPermissionRequest()
     Scaffold(
         bottomBar = {
             NavigationBar(

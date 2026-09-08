@@ -1,18 +1,23 @@
 package com.example.englishapplication.util
 
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class NavigationEventManager @Inject constructor(
 ){
-    private val _events = MutableSharedFlow<NavigationEvent>(extraBufferCapacity = 1)
-    val events : SharedFlow<NavigationEvent> = _events
+    private val _events = MutableStateFlow<NavigationEvent?>(null)
+    val events : StateFlow<NavigationEvent?> = _events
 
-    suspend fun requestNavigateToReviewTab(){
-        _events.emit(NavigationEvent.NavigationToReviewTab)
+     fun requestNavigateToReviewTab(){
+        _events.value = NavigationEvent.NavigationToReviewTab
+    }
+    fun consumeEvent(){
+        _events.value = null
     }
 
 }

@@ -7,19 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.englishapplication.permission.post_notification.NotificationHelper
-import com.example.englishapplication.presentation.add_word.AddWordScreen
-import com.example.englishapplication.presentation.add_word.AddWordViewModel
 import com.example.englishapplication.presentation.login.LoginScreen
 import com.example.englishapplication.presentation.login.LoginViewModel
 import com.example.englishapplication.presentation.main.MainScreen
@@ -30,8 +23,7 @@ import com.example.englishapplication.ui.theme.EnglishApplicationTheme
 import com.example.englishapplication.util.AuthEvent
 import com.example.englishapplication.util.AuthEventManager
 import com.example.englishapplication.util.NavigationEventManager
-import com.example.englishapplication.util.ReviewReminderScheduler
-import com.example.englishapplication.util.ReviewReminderWorker
+import com.example.englishapplication.util.ReminderReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,8 +57,8 @@ class MainActivity : ComponentActivity() {
         handleNotificationIntent(intent)
     }
     private fun handleNotificationIntent(intent: Intent){
-        val route = intent.getStringExtra(ReviewReminderWorker.EXTRA_NAVIGATE_TO)
-        if(route == ReviewReminderWorker.ROUTE_REVIEW){
+        val route = intent.getStringExtra(ReminderReceiver.EXTRA_NAVIGATE_TO)
+        if(route == ReminderReceiver.ROUTE_REVIEW){
             lifecycleScope.launch {
                 navigationEventManager.requestNavigateToReviewTab()
             }

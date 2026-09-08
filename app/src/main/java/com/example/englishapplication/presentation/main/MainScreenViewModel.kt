@@ -16,6 +16,9 @@ class MainScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<MainScreenUiState>(MainScreenUiState.Idle)
     val uiState : StateFlow<MainScreenUiState> = _uiState
 
-    val navigationEvents : SharedFlow<NavigationEvent> = navigationEventManager.events
+    val navigationEvents : StateFlow<NavigationEvent?> = navigationEventManager.events
 
+    fun onNavigationHandled() {
+        navigationEventManager.consumeEvent()
+    }
 }

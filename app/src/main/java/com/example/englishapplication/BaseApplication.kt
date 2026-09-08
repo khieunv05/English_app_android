@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory   // ← đổi import
 import androidx.work.Configuration
 import com.example.englishapplication.permission.post_notification.NotificationHelper
-import com.example.englishapplication.util.ReviewReminderScheduler
+import com.example.englishapplication.util.ReminderScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class BaseApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         NotificationHelper.createNotificationChannel(this)
-        ReviewReminderScheduler.scheduleDailyReminder(this)
+        ReminderScheduler.scheduleNext(this)
     }
 
     override val workManagerConfiguration: Configuration

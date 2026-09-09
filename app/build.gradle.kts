@@ -77,6 +77,8 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
     ksp(libs.androidx.hilt.compiler)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 

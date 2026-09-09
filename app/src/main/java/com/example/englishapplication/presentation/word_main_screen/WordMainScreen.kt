@@ -20,13 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.englishapplication.domain.model.WordData
+import com.example.englishapplication.widget.ReviewWidget
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +48,8 @@ fun WordMainScreen(
     val listWordUpdate by viewModel.listWordReview.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
     val isReviewMode = selectedTab.value == 1
-
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -97,7 +102,12 @@ fun WordMainScreen(
         floatingActionButton = {
             if (isReviewMode && listWordUpdate.isNotEmpty()) {
                 ExtendedFloatingActionButton(
-                    onClick = { viewModel.updateListWordReview() },
+                    onClick = { viewModel.updateListWordReview({
+                        scope.launch {
+                            ReviewWidget().updateAll(context)
+                        }
+                    })
+                              },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(16.dp),

@@ -102,7 +102,7 @@ class WordMainScreenViewModel @Inject constructor(
                 }
         }
     }
-    fun updateListWordReview(){
+    fun updateListWordReview(onComplete:()-> Unit){
         _uiState.value = WordMainScreenUiState.Loading
         viewModelScope.launch {
             val wordIds = _listWordReview.value.toList()
@@ -112,6 +112,7 @@ class WordMainScreenViewModel @Inject constructor(
                     _listWordReview.value = emptySet()
                     _uiState.value = WordMainScreenUiState.UpdateSuccess("Cập nhật thành công")
                     loadData()
+                    onComplete()
                 }
                 .onFailure { error ->
                     _uiState.value = WordMainScreenUiState.Error(error.message ?: "Cập nhật dữ liệu thất bại")

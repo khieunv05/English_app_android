@@ -3,6 +3,7 @@ agp = "9.2.1"
 coreKtx = "1.19.0"
 datastorePreferences = "1.2.1"
 desugar_jdk_libs = "2.1.5"
+glanceAppwidget = "1.2.0"
 hiltCompiler = "1.4.0"
 hiltNavigationCompose = "1.4.0"
 hiltWork = "1.4.0"
@@ -27,6 +28,8 @@ workRuntimeKtx = "2.11.2"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences-v121 = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }

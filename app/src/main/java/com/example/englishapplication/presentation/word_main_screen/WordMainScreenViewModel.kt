@@ -42,6 +42,14 @@ class WordMainScreenViewModel @Inject constructor(
 
     val selectedTab : StateFlow<Int> = _selectedTab
 
+    private val _searchQuery = MutableStateFlow("")
+
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+    }
+
     fun onChangeSelectedTab(newTab : Int){
         _selectedTab.value = newTab
         _listWordReview.value = emptySet()
@@ -52,23 +60,25 @@ class WordMainScreenViewModel @Inject constructor(
     }
 
     val filteredWords: StateFlow<List<WordResponseWithDate>> = combine(
-        _userWords, _selectedTab
-    ) { words, tab ->
-        when (tab) {
-            1 -> {
-                val today = LocalDate.now()
-                words
-                    .map { entry ->
-                        entry.copy(
-                            words = entry.words.filter {
-                                it.nextReview == null || it.nextReview.toLocalDate() <= today
-                            }
-                        )
+        _userWords, _selectedTab, _searchQuery
+    ) { words, tab, query ->
+        val keyword = query.trim()
+        words
+            .map { entry ->
+                entry.copy(
+                    words = entry.words.filter { word ->
+                        val matchTab = if (tab == 1) {
+                            val today = LocalDate.now()
+                            word.nextReview == null || word.nextReview.toLocalDate() <= today
+                        } else true
+                        val matchQuery = keyword.isEmpty() ||
+                            word.english.contains(keyword, ignoreCase = true) ||
+                            word.vietnamese.contains(keyword, ignoreCase = true)
+                        matchTab && matchQuery
                     }
-                    .filter { it.words.isNotEmpty() }
+                )
             }
-            else -> words
-        }
+            .filter { it.words.isNotEmpty() }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun loadData(){

@@ -12,7 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,6 +45,7 @@ fun WordMainScreen(
     val uiState by viewModel.uiState.collectAsState()
     val dailyWords by viewModel.filteredWords.collectAsState()
     val selectedTab = viewModel.selectedTab.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val tabs = listOf("Tất cả", "Cần ôn tập")
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val listWordUpdate by viewModel.listWordReview.collectAsState()
@@ -150,33 +153,64 @@ fun WordMainScreen(
                     )
                 }
                 else -> {
-                    if (dailyWords.isEmpty()) {
-                        EmptyState(modifier = Modifier.align(Alignment.Center))
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(top = 16.dp, bottom = 88.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            dailyWords.forEach { dailyEntry ->
-                                item {
-                                    DateHeader(
-                                        dateText = dailyEntry.date.format(dateFormatter),
-                                        wordCount = dailyEntry.words.size
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = viewModel::onSearchQueryChange,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                            placeholder = { Text("Tìm theo tiếng Anh / tiếng Việt...") },
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Tìm kiếm") },
+                            trailingIcon = {
+                                if (searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Xóa tìm kiếm")
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            if (dailyWords.isEmpty()) {
+                                if (searchQuery.isBlank()) {
+                                    EmptyState(modifier = Modifier.align(Alignment.Center))
+                                } else {
+                                    Text(
+                                        text = "Không tìm thấy từ phù hợp",
+                                        modifier = Modifier.align(Alignment.Center).padding(24.dp),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = MaterialTheme.typography.bodyLarge
                                     )
                                 }
-                                items(dailyEntry.words) { word ->
-                                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                        WordItem(
-                                            word = word,
-                                            isReviewMode = isReviewMode,
-                                            isChecked = word.id in listWordUpdate,
-                                            onClickWordItem = { wordId ->
-                                                if (isReviewMode) viewModel.toggleWordReview(wordId)
-                                                else onClickWordItem(wordId)
-                                            },
-                                            onClickDelete = { wordId -> viewModel.deleteWord(wordId) }
-                                        )
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentPadding = PaddingValues(top = 16.dp, bottom = 88.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    dailyWords.forEach { dailyEntry ->
+                                        item {
+                                            DateHeader(
+                                                dateText = dailyEntry.date.format(dateFormatter),
+                                                wordCount = dailyEntry.words.size
+                                            )
+                                        }
+                                        items(dailyEntry.words) { word ->
+                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                                WordItem(
+                                                    word = word,
+                                                    isReviewMode = isReviewMode,
+                                                    isChecked = word.id in listWordUpdate,
+                                                    onClickWordItem = { wordId ->
+                                                        if (isReviewMode) viewModel.toggleWordReview(wordId)
+                                                        else onClickWordItem(wordId)
+                                                    },
+                                                    onClickDelete = { wordId -> viewModel.deleteWord(wordId) }
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -14,8 +14,13 @@ class AuthEventManager @Inject constructor() {
     suspend fun notifyUnauthorized() {
         _authEvents.emit(AuthEvent.Unauthorized)
     }
+
+    suspend fun notifyLoggedOut() {
+        _authEvents.emit(AuthEvent.LoggedOut)
+    }
 }
 
 sealed class AuthEvent {
     object Unauthorized : AuthEvent()
+    object LoggedOut : AuthEvent()
 }

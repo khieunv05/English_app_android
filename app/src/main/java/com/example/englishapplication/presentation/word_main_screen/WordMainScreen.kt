@@ -275,7 +275,7 @@ fun DateHeader(dateText: String, wordCount: Int) {
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

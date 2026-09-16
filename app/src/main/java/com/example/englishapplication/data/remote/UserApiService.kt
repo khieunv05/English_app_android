@@ -1,6 +1,7 @@
 package com.example.englishapplication.data.remote
 
 import com.example.englishapplication.domain.model.CreateUserRequest
+import com.example.englishapplication.domain.model.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -16,5 +17,5 @@ interface UserApiService {
     suspend fun login(
         @Field("username") username: String,
         @Field("password") password: String
-    ): Response<Unit>
+    ): Response<LoginResponse>
 }

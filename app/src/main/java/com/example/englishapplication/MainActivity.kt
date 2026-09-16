@@ -74,7 +74,8 @@ fun AppNavHost(
     LaunchedEffect(Unit) {
         authEventManager.authEvents.collect { event ->
             when (event) {
-                is AuthEvent.Unauthorized -> {
+                is AuthEvent.Unauthorized,
+                is AuthEvent.LoggedOut -> {
                     navController.navigate("login") {
                         popUpTo(0) { inclusive = true }
                     }

@@ -1,6 +1,7 @@
 package com.example.englishapplication.di
 
 import com.example.englishapplication.data.local.EncryptedTokenStorage
+import com.example.englishapplication.data.remote.AuthApiService
 import com.example.englishapplication.data.remote.GeminiApiService
 import com.example.englishapplication.data.remote.LocalDateTimeAdapter
 import com.example.englishapplication.data.remote.PhraseApiService
@@ -24,6 +25,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val BASE_URL = "http://192.168.1.3:8080"
+
     @Provides
     @Singleton
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient{
@@ -32,17 +35,33 @@ object NetworkModule {
     }
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
-        val gson: Gson = GsonBuilder()
+    fun provideGson(): Gson{
+        return GsonBuilder()
             .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .create()
-
+    }
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit{
         return Retrofit.Builder()
-            .baseUrl("http://192.168.1.3:8080")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
+    }
+
+    // Retrofit rieng cho viec refresh token: KHONG gan AuthInterceptor
+    // -> tranh vong lap vo han khi chinh request refresh bi 401
+    @Provides
+    @Singleton
+    fun provideAuthApiService(gson: Gson): AuthApiService{
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(OkHttpClient.Builder().build())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(AuthApiService::class.java)
     }
     @Provides
     @Singleton

@@ -20,6 +20,7 @@ import com.example.englishapplication.permission.post_notification.NotificationP
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainNavHost
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainScreen
 import com.example.englishapplication.presentation.paragraph_main.ParagraphMainViewModel
+import com.example.englishapplication.presentation.profile.ProfileScreen
 import com.example.englishapplication.presentation.word_main_screen.WordNavHost
 import com.example.englishapplication.util.NavigationEvent
 
@@ -98,6 +99,9 @@ fun MainScreen(
                 }
                 composable(MainScreenTabs.PARAGRAPH.route) {
                     ParagraphMainNavHost()
+                }
+                composable(MainScreenTabs.PROFILE.route) {
+                    ProfileScreen()
                 }
             }
         }

@@ -7,4 +7,7 @@ import retrofit2.Response
 interface UserRepository {
     suspend fun login(loginRequest: LoginRequest): Result<Unit>
     suspend fun createUser(createUserRequest: CreateUserRequest): Result<Unit>
+
+
+    suspend fun logout(): Result<Unit>
 }
